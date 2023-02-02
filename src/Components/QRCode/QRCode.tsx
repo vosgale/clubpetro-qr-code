@@ -14,21 +14,25 @@ export const QRCode = () => {
     const b64encoded = btoa(String.fromCharCode(...new Uint8Array(data)));
     setImage(b64encoded);
   };
-
   const getQRCODE = async () => {
-    const response = await api.get(`/robot/get-qrcode/${currentSessionName}`);
-    if (
-      response.data.data === null &&
-      response.data.sessionStatus !== "Not Logged"
-    ) {
-      if (response.data.sessionStatus === "waitForLogin") {
-        setLoadingStatus("Esperando pelo login...");
-      }
-      setTimeout(() => getQRCODE(), 2000);
-    } else {
-      handleQRCode(response.data.data.data);
+    if (currentSessionName) {
+      const response = await api.get(`/robot/get-qrcode/${currentSessionName}`);
+      if (
+        (response.data.data === null &&
+          response.data.sessionStatus === "waitForLogin") ||
+        response.data.sessionStatus === "initWhatsapp"
+      ) {
+        if (response.data.sessionStatus === "waitForLogin") {
+          setLoadingStatus("Esperando pelo login...");
+        }
+        setTimeout(() => getQRCODE(), 2000);
+      } else if (response.data.sessionStatus !== "Not Logged") {
+        handleQRCode(response.data.data.data);
+        setTimeout(() => getQRCODE(), 5000);
+      } else return destroySession();
     }
   };
+
   useEffect(() => {
     getQRCODE();
   }, []);
@@ -36,6 +40,8 @@ export const QRCode = () => {
   if (currentSessionName === null) {
     return <Navigate to="/iniciar-sessao" replace />;
   }
+
+  // successChat
 
   return (
     <>
@@ -52,8 +58,8 @@ export const QRCode = () => {
       <Flex direction="column">
         <Flex
           height="250px"
-          width="250px"
           direction="column"
+          width="250px"
           alignItems="center"
           justifyContent="center"
           rowGap="15px"

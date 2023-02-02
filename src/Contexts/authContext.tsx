@@ -106,9 +106,8 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
   const destroySession = () => {
-    console.log("chamou");
-    localStorage.removeItem("session-name");
     setCurrentSessionName(null);
+    localStorage.removeItem("session-name");
   };
 
   useEffect(() => {
