@@ -6,7 +6,9 @@ import { useState, useEffect } from "react";
 import { Text } from "@chakra-ui/react";
 
 export const QRCode = () => {
-  const [loadingStatus, setLoadingStatus] = useState("Iniciando Whatsapp...");
+  const [loadingStatus, setLoadingStatus] = useState<undefined | string>(
+    undefined
+  );
   const [image, setImage] = useState<undefined | string>(undefined);
   const { destroySession, currentSessionName } = useAuth();
 
@@ -32,10 +34,6 @@ export const QRCode = () => {
       } else return destroySession();
     }
   };
-
-  useEffect(() => {
-    getQRCODE();
-  }, []);
 
   if (currentSessionName === null) {
     return <Navigate to="/iniciar-sessao" replace />;
@@ -65,10 +63,24 @@ export const QRCode = () => {
           rowGap="15px"
         >
           {!image ? (
-            <>
-              <Spinner size="xl" color="primary" />
-              <Text>{loadingStatus}</Text>
-            </>
+            loadingStatus ? (
+              <>
+                <Spinner size="xl" color="primary" />
+                <Text>{loadingStatus}</Text>
+              </>
+            ) : (
+              <p>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setLoadingStatus("iniciando o Whatsapp");
+                    getQRCODE();
+                  }}
+                >
+                  Gerar QRCODE
+                </Button>
+              </p>
+            )
           ) : (
             <Image
               width="200px"
