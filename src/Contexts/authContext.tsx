@@ -3,13 +3,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { ILoginForm } from "../Components/Forms/types";
 import api from "../Services/api";
 
-interface AuthContextData {
+interface IAuthContextData {
   signed: boolean;
   isLoading: boolean;
   Login(values: ILoginForm): Promise<void>;
   logOut: () => void;
   user?: IUser;
   setSession: (sessionName: string) => void;
+  destroySession: () => void;
   currentSessionName: string | null;
 }
 interface IUser {
@@ -22,7 +23,7 @@ interface IUser {
   isAdmin: boolean;
   name: string;
 }
-const AuthContext = createContext({} as AuthContextData);
+const AuthContext = createContext({} as IAuthContextData);
 export function useAuth() {
   const context = useContext(AuthContext);
 
@@ -57,6 +58,7 @@ export const AuthProvider = ({ children }: any) => {
     if (accessToken) {
       localStorage.setItem("accessToken", accessToken);
       setCurrentAcessToken(accessToken);
+      api.defaults.headers.Authorization = `Bearer ${accessToken}`;
       setAuthenticated(true);
       setIsLoading(false);
     } else {
@@ -82,7 +84,7 @@ export const AuthProvider = ({ children }: any) => {
     setIsLoading(true);
     if (isValidToken()) {
       setAuthenticated(true);
-
+      api.defaults.headers.Authorization = `Bearer ${currentAcessToken}`;
       setIsLoading(false);
     } else {
       setAuthenticated(false);
@@ -103,6 +105,12 @@ export const AuthProvider = ({ children }: any) => {
       console.log("error");
     }
   };
+  const destroySession = () => {
+    console.log("chamou");
+    localStorage.removeItem("session-name");
+    setCurrentSessionName(null);
+  };
+
   useEffect(() => {
     loadUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,6 +125,7 @@ export const AuthProvider = ({ children }: any) => {
         user,
         logOut,
         setSession,
+        destroySession,
         currentSessionName,
       }}
     >
