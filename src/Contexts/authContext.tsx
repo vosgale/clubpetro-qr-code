@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
-import { ILoginForm } from "../Components/Forms/types";
+import { ILoginForm, ISessionForm } from "../Components/Forms/types";
 import api from "../Services/api";
 
 interface IAuthContextData {
@@ -9,7 +9,7 @@ interface IAuthContextData {
   Login(values: ILoginForm): Promise<void>;
   logOut: () => void;
   user?: IUser;
-  setSession: (sessionName: string) => void;
+  setSession: (values: ISessionForm) => void;
   destroySession: () => void;
   currentSessionName: string | null;
 }
@@ -94,13 +94,13 @@ export const AuthProvider = ({ children }: any) => {
   const logOut = () => {
     setAuth(undefined);
   };
-  const setSession = async (sessionName: string) => {
+  const setSession = async (values: ISessionForm) => {
     try {
       const response = await api.post("/robot/create", {
-        sessionName,
+        ...values,
       });
       localStorage.setItem("session-name", response.data.sessionName);
-      setCurrentSessionName(sessionName);
+      setCurrentSessionName(values.sessionName);
     } catch (error) {
       console.log("error");
     }

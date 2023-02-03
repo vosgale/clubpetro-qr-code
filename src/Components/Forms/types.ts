@@ -4,4 +4,10 @@ export interface ILoginForm {
 }
 export interface ISessionForm {
     sessionName: string;
+    userName: string;
+    userEmail: string;
+    userCPF: string;
+    userWhatsApp: string;
+    dailyMessagesLimit: string;
+
 }
