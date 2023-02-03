@@ -133,6 +133,7 @@ export const SessionForm = () => {
                   <FormLabel>Limite de mensagens diárias</FormLabel>
                   <Field
                     as={Input}
+                    type="number"
                     id="dailyMessagesLimit"
                     name="dailyMessagesLimit"
                     variant="primary"
