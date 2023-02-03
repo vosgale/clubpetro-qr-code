@@ -13,14 +13,10 @@ import {
 import { Formik, Field, Form, FormikHelpers } from "formik";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../Contexts/authContext";
-import NumberFormat, {
-  NumberFormatBase,
-  NumericFormat,
-  PatternFormat,
-} from "react-number-format";
+import { PatternFormat } from "react-number-format";
 import { ISessionForm } from "./types";
 import { SessionValidation } from "./validations";
-import React from "react";
+
 export const SessionForm = () => {
   const { setSession, currentSessionName } = useAuth();
   if (currentSessionName !== null) {

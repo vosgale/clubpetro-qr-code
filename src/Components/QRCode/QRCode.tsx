@@ -1,11 +1,12 @@
-import { Button, Flex, Image, Spinner } from "@chakra-ui/react";
+import { Button, Flex, Image, Spinner, useToast } from "@chakra-ui/react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../Contexts/authContext";
 import api from "../../Services/api";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Text } from "@chakra-ui/react";
 
 export const QRCode = () => {
+  const toast = useToast();
   const [loadingStatus, setLoadingStatus] = useState<undefined | string>(
     undefined
   );
@@ -31,7 +32,28 @@ export const QRCode = () => {
       } else if (response.data.sessionStatus !== "Not Logged") {
         handleQRCode(response.data.data.data);
         setTimeout(() => getQRCODE(), 5000);
-      } else return destroySession();
+      } else if (response.data.sessionStauts === "successChat") {
+        return (
+          destroySession(),
+          toast({
+            title: "QR Code utilizado com sucesso!",
+            description: "Crie uma nova sessão para obter um novo QR-CODE",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          })
+        );
+      } else
+        return (
+          destroySession(),
+          toast({
+            title: "Sessão expirada",
+            description: "Crie uma nova sessão para obter um novo QR-CODE",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          })
+        );
     }
   };
 
@@ -82,12 +104,15 @@ export const QRCode = () => {
               </p>
             )
           ) : (
-            <Image
-              width="200px"
-              height="200px"
-              src={`data:image/png;base64,${image}`}
-              alt=""
-            />
+            <>
+              <Image
+                width="200px"
+                height="200px"
+                src={`data:image/png;base64,${image}`}
+                alt="QRCODE"
+              />
+              <Text>Seu QR-CODE está pronto!</Text>
+            </>
           )}
         </Flex>
       </Flex>

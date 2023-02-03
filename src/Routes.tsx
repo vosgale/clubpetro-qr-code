@@ -15,7 +15,7 @@ interface ProtectedRoutes {
 }
 
 function Routes() {
-  const { signed, isLoading, logOut, currentSessionName } = useAuth();
+  const { signed, isLoading, logOut } = useAuth();
 
   const ProtectedRoute = ({ children }: ProtectedRoutes) => {
     if (!signed && !isLoading) {
